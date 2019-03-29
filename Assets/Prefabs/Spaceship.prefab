@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 7269301240991722038}
   - component: {fileID: 7269301240991722039}
   - component: {fileID: 7269301240991722032}
-  m_Layer: 0
+  - component: {fileID: 6096602468386543936}
+  m_Layer: 8
   m_Name: Spaceship
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,3 +96,20 @@ MonoBehaviour:
   verticalSpeed: 10
   horizontalAcceleration: 2
   maxHorizontalSpeed: 15
+--- !u!114 &6096602468386543936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7269301240991722033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b1e7112fc1ed104cbef1922466f33db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnCollision:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null

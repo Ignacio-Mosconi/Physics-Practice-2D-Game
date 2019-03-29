@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 8161558802207310965}
   - component: {fileID: 8161558802207310964}
   - component: {fileID: 4394229734068292367}
-  m_Layer: 0
+  - component: {fileID: 6766785489143581932}
+  m_Layer: 11
   m_Name: Bomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,5 +93,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3a9986b0f670fe44b549ede65b3fb6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravity: 4.905
-  startSpeed: 12
+--- !u!114 &6766785489143581932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8161558802207310971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b1e7112fc1ed104cbef1922466f33db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnCollision:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null

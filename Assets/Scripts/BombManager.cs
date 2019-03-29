@@ -25,7 +25,19 @@ public class BombManager : MonoBehaviour
         bombMovements = new BombMovement[bombPool.Amount];
 
         for (int i = 0; i < bombPool.Amount; i++)
-            bombMovements[i] = bombPool.GetObjectFromPool(i).GetComponent<BombMovement>();
+        {
+            GameObject bombObject = bombPool.GetObjectFromPool(i);
+
+            BoundingBox box = bombObject.GetComponent<BoundingBox>();
+
+            if (box)
+            {
+                LayerMask layer = LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer));
+                CollisionManager.Instance.RegisterBoundingBox(layer, box);
+            }
+            
+            bombMovements[i] = bombObject.GetComponent<BombMovement>();
+        }
     }
 
     void Update()

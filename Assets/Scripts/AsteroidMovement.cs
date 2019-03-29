@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(BoundingBox))]
 public class AsteroidMovement : MonoBehaviour
 {   
     float speed;
@@ -9,8 +10,15 @@ public class AsteroidMovement : MonoBehaviour
     void Awake()
     {
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        BoundingBox box = GetComponent<BoundingBox>();
         
-        heightOffset = spriteRenderer.sprite.rect.height * 0.5f; 
+        heightOffset = spriteRenderer.sprite.rect.height * 0.5f;
+        box.OnCollision.AddListener(OnCollsionDetected);
+    }
+
+    void OnCollsionDetected()
+    {
+        Respawn();
     }
 
     public void Respawn()

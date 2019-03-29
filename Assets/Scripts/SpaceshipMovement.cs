@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(BoundingBox))]
 public class SpaceshipMovement : MonoBehaviour
 {
     enum AccelerationType
@@ -17,11 +18,11 @@ public class SpaceshipMovement : MonoBehaviour
     [SerializeField] float horizontalAcceleration = 2f;
     [SerializeField] float maxHorizontalSpeed = 15f;
 
+    Vector3 initialPosition;
     float[] boundaries = { 0f, 0f, 0f, 0f};
     float currentHorAcceleration = 0f;
     float currentHorSpeed = 0f;
     float initialHorSpeed = 0f;
-    float initialHorPosition;
 
     void Awake()
     {
@@ -34,8 +35,18 @@ public class SpaceshipMovement : MonoBehaviour
         boundaries[(int)Boundary.Bottom] = Camera.main.ScreenToWorldPoint(new Vector3(0f, heightOffset, 0f)).y ;
         boundaries[(int)Boundary.Left] = Camera.main.ScreenToWorldPoint(new Vector3(widthOffset, 0f, 0f)).x;
         boundaries[(int)Boundary.Right] = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width - widthOffset, 0f, 0f)).x;
+
+        initialPosition = transform.position;
+    }
+
+    void Start()
+    {
+        BoundingBox box = GetComponent<BoundingBox>();
+        LayerMask layer = LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer));
         
-        initialHorPosition = transform.position.x;
+        CollisionManager.Instance.RegisterBoundingBox(layer, box);
+
+        box.OnCollision.AddListener(OnCollisionDetected);
     }
 
     void Update()
@@ -84,5 +95,18 @@ public class SpaceshipMovement : MonoBehaviour
                 currentHorAcceleration = 0f;
                 break;
         }
+    }
+
+    void Respawn()
+    {
+        transform.position = initialPosition;
+        ChangeHorizontalAcceleration(AccelerationType.Stop);
+        initialHorSpeed = 0f;
+        currentHorSpeed = 0f;
+    }
+
+    void OnCollisionDetected()
+    {
+        Respawn();
     }
 }

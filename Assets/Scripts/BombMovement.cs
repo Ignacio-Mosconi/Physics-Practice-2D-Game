@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(BoundingBox))]
 public class BombMovement : MonoBehaviour
 {
     float initialSpeed;
@@ -11,12 +12,15 @@ public class BombMovement : MonoBehaviour
     void Awake()
     {
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        BoundingBox box = GetComponent<BoundingBox>();
 
         widthOffset = spriteRenderer.sprite.rect.width * 0.5f;
         heightOffset = spriteRenderer.sprite.rect.height * 0.5f;
         
         SetStartingPosition();
         SetStartingSpeed();
+
+        box.OnCollision.AddListener(OnCollisionDetected);
     }
 
     void SetStartingPosition()
@@ -32,6 +36,12 @@ public class BombMovement : MonoBehaviour
     {
         initialSpeed = BombManager.Instance.GetRandomStartSpeed();
         currentSpeed = initialSpeed;
+    }
+
+    void OnCollisionDetected()
+    {
+        SetStartingPosition();
+        SetStartingSpeed();
     }
 
     public void Bounce()

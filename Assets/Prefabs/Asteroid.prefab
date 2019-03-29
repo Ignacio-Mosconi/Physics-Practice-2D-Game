@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 2365370459806809760}
   - component: {fileID: 1054339604096075360}
   - component: {fileID: 7834466137590854694}
-  m_Layer: 0
+  - component: {fileID: 640249184827115747}
+  m_Layer: 11
   m_Name: Asteroid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,5 +93,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10692c9297242dc4e988a39bde156fbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minAsteroidSpeed: 1
-  maxAsteroidSpeed: 10
+--- !u!114 &640249184827115747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5660004009582348195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b1e7112fc1ed104cbef1922466f33db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnCollision:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
