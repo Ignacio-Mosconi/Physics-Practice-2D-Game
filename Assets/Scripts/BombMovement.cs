@@ -3,31 +3,31 @@
 [RequireComponent(typeof(BoundingBox))]
 public class BombMovement : MonoBehaviour
 {
+    CameraBounds cameraBounds;
+    BoundingBox boundingBox;
     float initialSpeed;
     float currentSpeed;
     float initialVerPosition;
-    float widthOffset;
-    float heightOffset;
 
     void Awake()
     {
-        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-        BoundingBox box = GetComponent<BoundingBox>();
+        cameraBounds = FindObjectOfType<CameraBounds>(); 
+        boundingBox = GetComponent<BoundingBox>();
 
-        widthOffset = spriteRenderer.sprite.rect.width * 0.5f;
-        heightOffset = spriteRenderer.sprite.rect.height * 0.5f;
-        
+        boundingBox.OnCollision.AddListener(OnCollisionDetected);
+    }
+
+    void Start()
+    {
         SetStartingPosition();
         SetStartingSpeed();
-
-        box.OnCollision.AddListener(OnCollisionDetected);
     }
 
     void SetStartingPosition()
     {
-        float horizontalSpawnPos = Random.Range(Camera.main.ScreenToWorldPoint(new Vector3(widthOffset, 0f, 0f)).x,
-                                            Camera.main.ScreenToWorldPoint(new Vector3(Screen.width - widthOffset, 0f)).x);
-        float verticalSpawnPos = Camera.main.ScreenToWorldPoint(new Vector3(0f, heightOffset, 0f)).y;
+        float horizontalSpawnPos = Random.Range(cameraBounds.GetBorder(Border.Left) + boundingBox.Width * 0.5f,
+                                                cameraBounds.GetBorder(Border.Right) - boundingBox.Width * 0.5f);
+        float verticalSpawnPos = cameraBounds.GetBorder(Border.Bottom) + boundingBox.Height * 0.5f;
 
         transform.position = new Vector3(horizontalSpawnPos, verticalSpawnPos, 0f);
     }

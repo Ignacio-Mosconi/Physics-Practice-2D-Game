@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(BoundingBox))]
 public class SpaceshipMovement : MonoBehaviour
 {
@@ -9,15 +8,12 @@ public class SpaceshipMovement : MonoBehaviour
         Accelerate, Decelerate, Stop
     }
 
-    enum Boundary
-    {
-        Top, Bottom, Left, Right
-    }
-
     [SerializeField] float verticalSpeed = 10f;
     [SerializeField] float horizontalAcceleration = 2f;
     [SerializeField] float maxHorizontalSpeed = 15f;
 
+    BoundingBox boundingBox;
+    CameraBounds cameraBounds;
     Vector3 initialPosition;
     float[] boundaries = { 0f, 0f, 0f, 0f};
     float currentHorAcceleration = 0f;
@@ -26,27 +22,15 @@ public class SpaceshipMovement : MonoBehaviour
 
     void Awake()
     {
-        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-
-        float widthOffset = spriteRenderer.sprite.rect.width * 0.5f;
-        float heightOffset = spriteRenderer.sprite.rect.height * 0.5f;
-        
-        boundaries[(int)Boundary.Top] = Camera.main.ScreenToWorldPoint(new Vector3(0f, Screen.height - heightOffset, 0f)).y;
-        boundaries[(int)Boundary.Bottom] = Camera.main.ScreenToWorldPoint(new Vector3(0f, heightOffset, 0f)).y ;
-        boundaries[(int)Boundary.Left] = Camera.main.ScreenToWorldPoint(new Vector3(widthOffset, 0f, 0f)).x;
-        boundaries[(int)Boundary.Right] = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width - widthOffset, 0f, 0f)).x;
-
         initialPosition = transform.position;
     }
 
     void Start()
     {
-        BoundingBox box = GetComponent<BoundingBox>();
-        LayerMask layer = LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer));
-        
-        CollisionManager.Instance.RegisterBoundingBox(layer, box);
+        boundingBox = GetComponent<BoundingBox>();
+        cameraBounds = FindObjectOfType<CameraBounds>();
 
-        box.OnCollision.AddListener(OnCollisionDetected);
+        boundingBox.OnCollision.AddListener(OnCollisionDetected);
     }
 
     void Update()
@@ -68,15 +52,20 @@ public class SpaceshipMovement : MonoBehaviour
 
     void ClampPosition()
     {
-        transform.position = new Vector3(Mathf.Clamp(transform.position.x, boundaries[(int)Boundary.Left], boundaries[(int)Boundary.Right]),
-                                Mathf.Clamp(transform.position.y, boundaries[(int)Boundary.Bottom], boundaries[(int)Boundary.Top]),
-                                transform.position.z);
+        float leftBorder = cameraBounds.GetBorder(Border.Left) + boundingBox.Width * 0.5f;
+        float rightBorder = cameraBounds.GetBorder(Border.Right) - boundingBox.Width * 0.5f;
+        float bottomBorder = cameraBounds.GetBorder(Border.Bottom) + boundingBox.Height * 0.5f;
+        float topBorder = cameraBounds.GetBorder(Border.Top) - boundingBox.Height * 0.5f;
 
-        if (transform.position.x == boundaries[(int)Boundary.Left] || transform.position.x == boundaries[(int)Boundary.Right])
+        transform.position = new Vector3(Mathf.Clamp(transform.position.x, leftBorder, rightBorder),
+                                        Mathf.Clamp(transform.position.y, bottomBorder, topBorder),
+                                        transform.position.z);
+
+        if (transform.position.x == leftBorder || transform.position.x == rightBorder)
         {
             currentHorSpeed = 0f;
-            if ((transform.position.x == boundaries[(int)Boundary.Left] && currentHorAcceleration == -horizontalAcceleration) ||
-                (transform.position.x == boundaries[(int)Boundary.Right] && currentHorAcceleration == horizontalAcceleration))
+            if ((transform.position.x == leftBorder && currentHorAcceleration == -horizontalAcceleration) ||
+                (transform.position.x == rightBorder && currentHorAcceleration == horizontalAcceleration))
                 ChangeHorizontalAcceleration(AccelerationType.Stop);
         }
     }

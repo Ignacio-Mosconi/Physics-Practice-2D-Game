@@ -4,26 +4,28 @@ using UnityEngine.Events;
 [RequireComponent(typeof(SpriteRenderer))]
 public class BoundingBox : MonoBehaviour
 {
-    [HideInInspector] public UnityEvent OnCollision = new UnityEvent(); 
-    
-    float widthOffset;
-    float heightOffset;
+    [HideInInspector] public UnityEvent OnCollision = new UnityEvent();
+    SpriteRenderer spriteRenderer; 
 
     void Awake()
     {
-        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-
-        widthOffset = spriteRenderer.sprite.rect.width * 0.5f;
-        heightOffset = spriteRenderer.sprite.rect.height * 0.5f;
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    public float WidthOffset
+    void Start()
     {
-        get { return widthOffset; }
+        LayerMask layer = LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer));
+
+        CollisionManager.Instance.RegisterBoundingBox(layer, this);
     }
 
-    public float HeightOffset
+    public float Width
     {
-        get { return heightOffset; }
+        get { return spriteRenderer.bounds.size.x; }
+    }
+
+    public float Height
+    {
+        get { return spriteRenderer.bounds.size.y; }
     }
 }

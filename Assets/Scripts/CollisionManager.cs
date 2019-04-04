@@ -7,7 +7,7 @@ public class CollisionManager : MonoBehaviour
 
     [SerializeField] LayerMask[] collisionLayers;
 
-    Dictionary<LayerMask, List<BoundingBox>> collisionBoxesDict = new Dictionary<LayerMask, List<BoundingBox>>();
+    Dictionary<LayerMask, List<BoundingBox>> collisionBoxes = new Dictionary<LayerMask, List<BoundingBox>>();
 
     void Awake()
     {
@@ -17,23 +17,23 @@ public class CollisionManager : MonoBehaviour
 
     void Update()
     {
-        foreach (LayerMask layerA in collisionBoxesDict.Keys)
+        foreach (LayerMask layerA in collisionBoxes.Keys)
         {
-            foreach (LayerMask layerB in collisionBoxesDict.Keys)
+            foreach (LayerMask layerB in collisionBoxes.Keys)
             {
                 if (layerA != layerB)
                 {
-                    foreach (BoundingBox boxA in collisionBoxesDict[layerA])
+                    foreach (BoundingBox boxA in collisionBoxes[layerA])
                     {
-                        Vector2 posA = Camera.main.WorldToScreenPoint(boxA.transform.position);
+                        Vector2 posA = boxA.transform.position;
 
-                        foreach (BoundingBox boxB in collisionBoxesDict[layerB])
+                        foreach (BoundingBox boxB in collisionBoxes[layerB])
                         {
-                            Vector2 posB = Camera.main.WorldToScreenPoint(boxB.transform.position);
+                            Vector2 posB = boxB.transform.position;
                             Vector2 diff = posB - posA;
 
-                            float minDistX = boxA.WidthOffset + boxB.WidthOffset;
-                            float minDistY = boxA.HeightOffset + boxB.HeightOffset;
+                            float minDistX = (boxA.Width + boxB.Width) * 0.5f;
+                            float minDistY = (boxA.Height + boxB.Height) * 0.5f;
 
                             float deltaX = Mathf.Abs(diff.x);
                             float deltaY = Mathf.Abs(diff.y);
@@ -52,13 +52,13 @@ public class CollisionManager : MonoBehaviour
 
     public void RegisterBoundingBox(LayerMask layer, BoundingBox box)
     {
-        if (!collisionBoxesDict.ContainsKey(layer))
+        if (!collisionBoxes.ContainsKey(layer))
         {
             List<BoundingBox> boxList = new List<BoundingBox>();
-            collisionBoxesDict.Add(layer, boxList);
+            collisionBoxes.Add(layer, boxList);
         }
 
-        collisionBoxesDict[layer].Add(box);
+        collisionBoxes[layer].Add(box);
     }
 
     public static CollisionManager Instance

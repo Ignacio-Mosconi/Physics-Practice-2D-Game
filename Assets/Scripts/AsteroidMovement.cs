@@ -1,19 +1,18 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(BoundingBox))]
 public class AsteroidMovement : MonoBehaviour
-{   
+{
+    CameraBounds cameraBounds;
+    BoundingBox boundingBox;
     float speed;
-    float heightOffset;
 
     void Awake()
     {
-        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-        BoundingBox box = GetComponent<BoundingBox>();
+        cameraBounds = FindObjectOfType<CameraBounds>();
+        boundingBox = GetComponent<BoundingBox>();
         
-        heightOffset = spriteRenderer.sprite.rect.height * 0.5f;
-        box.OnCollision.AddListener(OnCollsionDetected);
+        boundingBox.OnCollision.AddListener(OnCollsionDetected);
     }
 
     void OnCollsionDetected()
@@ -23,9 +22,9 @@ public class AsteroidMovement : MonoBehaviour
 
     public void Respawn()
     {
-        float horizontalSpawnPos = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0f, 0f)).x;
-        float verticalSpawnPos = Random.Range(Camera.main.ScreenToWorldPoint(new Vector3(0f, heightOffset, 0f)).y, 
-                                            Camera.main.ScreenToWorldPoint(new Vector3(0f, Screen.height - heightOffset, 0f)).y);
+        float horizontalSpawnPos = cameraBounds.GetBorder(Border.Right);
+        float verticalSpawnPos = Random.Range(cameraBounds.GetBorder(Border.Bottom) + boundingBox.Height * 0.5f, 
+                                            cameraBounds.GetBorder(Border.Top) - boundingBox.Height * 0.5f);
 
         transform.position = new Vector3(horizontalSpawnPos, verticalSpawnPos, 0f);
         speed = AsteroidManager.Instance.GetRandomAsteroidSpeed();
@@ -35,7 +34,7 @@ public class AsteroidMovement : MonoBehaviour
     {
         transform.Translate(-speed * Time.deltaTime, 0f, 0f);
 
-        if (Camera.main.WorldToScreenPoint(transform.position).x < 0f)
+        if (Camera.main.WorldToViewportPoint(transform.position).x < 0f)
             Respawn();
     }
 }

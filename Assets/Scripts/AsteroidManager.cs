@@ -26,14 +26,6 @@ public class AsteroidManager : MonoBehaviour
         {
             GameObject asteroidObject = asteroidPool.GetObjectFromPool(i);
             
-            BoundingBox box = asteroidObject.GetComponent<BoundingBox>();
-
-            if (box)
-            {
-                LayerMask layer = LayerMask.GetMask(LayerMask.LayerToName(gameObject.layer));
-                CollisionManager.Instance.RegisterBoundingBox(layer, box);
-            }
-            
             asteroidMovements[i] = asteroidObject.GetComponent<AsteroidMovement>();
             asteroidMovements[i].Respawn();
         }
